@@ -15,10 +15,14 @@ public:
     BpBinderContainer(const sp<IBinder>& impl)
         : BpInterface<IBinderContainer>(impl) {}
 
-        void hello(char*, int) {
-            Parcel data;
+        void hello(char* pChar, int len) {
+            Parcel data, reply;
             data.writeInterfaceToken(IBinderContainer::getInterfaceDescriptor());
-            remote()->transact(HELLO, data, NULL);
+            remote()->transact(HELLO, data, &reply);
+            const char* info = String8(reply.readString16()).string();
+            for (int i = 0; i < len; i++) {
+            	pChar[i] = info[i];
+            }
         }
 };
 
